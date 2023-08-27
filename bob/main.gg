@@ -1,0 +1,37 @@
+package main
+
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
+
+var reUpper = regexp.MustCompile(`^[A-Za-z?]+$`)
+var reQuestion = regexp.MustCompile(`\?$`)
+
+// Hey should have a comment documenting it.
+func Hey(remark string) string {
+	if len(strings.TrimSpace(remark)) == 0 {
+		return "Fine. Be that way!"
+	}
+
+	remark = regexp.MustCompile(`[^A-Za-z?]+`).ReplaceAllString(remark, "")
+    fmt.Println(remark)
+	isUpper := reUpper.MatchString(remark)
+	isQuestion := reQuestion.MatchString(remark)
+
+	switch {
+	case isUpper && isQuestion:
+		return "Calm down, I know what I'm doing!"
+	case isUpper:
+		return "Whoa, chill out!"
+	case isQuestion:
+		return "Sure."
+	default:
+		return "Whatever."
+	}
+}
+
+func main() {
+	print(Hey("WATCH OUT!"))
+}

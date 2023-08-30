@@ -20,23 +20,14 @@ func Value(colors []string) int {
 	}
 
 	var resistance int
-	for i := 0; i < 2; i++ {
-
+	for i, fact := 0, 10; i < 2; i, fact = i+1, fact/10 {
 		val, ok := resistanceMap[colors[i]]
 		if !ok {
 			return -1
 		}
 
-		resistance += power(10, 1-i) * val
+		resistance += fact * val
 	}
 
 	return resistance
-}
-
-func power[T int](value T, num int) T {
-	if num <= 0 {
-		return 1
-	}
-
-	return value * power(value, num-1)
 }

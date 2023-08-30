@@ -1,13 +1,14 @@
 package anagram
 
 import (
-	"slices"
+	"sort"
 	"strings"
 )
 
 func Detect(subject string, candidates []string) []string {
-	sortedSubject := []rune(strings.ToLower(subject))
-	slices.Sort(sortedSubject)
+	subjectArr := strings.Split(strings.ToLower(subject), "")
+	sort.Strings(subjectArr)
+	sortedSubject := strings.Join(subjectArr, "")
 
 	anagrams := make([]string, 0)
 	for _, cand := range candidates {
@@ -15,10 +16,11 @@ func Detect(subject string, candidates []string) []string {
 			continue
 		}
 
-		sortedCand := []rune(strings.ToLower(cand))
-		slices.Sort(sortedCand)
+		candArr := strings.Split(strings.ToLower(cand), "")
+		sort.Strings(candArr)
+		sortedCand := strings.Join(candArr, "")
 
-		if strings.EqualFold(string(sortedSubject), string(sortedCand)) {
+		if strings.EqualFold(sortedSubject, string(sortedCand)) {
 			anagrams = append(anagrams, string(cand))
 		}
 	}

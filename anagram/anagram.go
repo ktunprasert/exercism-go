@@ -1,14 +1,21 @@
 package anagram
 
 import (
-	"sort"
+	"fmt"
 	"strings"
 )
 
+func hashmapString(str string) map[string]int {
+	m := make(map[string]int)
+	for _, v := range str {
+		m[string(v)]++
+	}
+
+	return m
+}
+
 func Detect(subject string, candidates []string) []string {
-	subjectArr := strings.Split(strings.ToLower(subject), "")
-	sort.Strings(subjectArr)
-	sortedSubject := strings.Join(subjectArr, "")
+	subjectMap := hashmapString(strings.ToLower(subject))
 
 	anagrams := make([]string, 0)
 	for _, cand := range candidates {
@@ -16,11 +23,9 @@ func Detect(subject string, candidates []string) []string {
 			continue
 		}
 
-		candArr := strings.Split(strings.ToLower(cand), "")
-		sort.Strings(candArr)
-		sortedCand := strings.Join(candArr, "")
+		candMap := hashmapString(strings.ToLower(cand))
 
-		if strings.EqualFold(sortedSubject, string(sortedCand)) {
+		if fmt.Sprintf("%v", subjectMap) == fmt.Sprintf("%v", candMap) {
 			anagrams = append(anagrams, string(cand))
 		}
 	}

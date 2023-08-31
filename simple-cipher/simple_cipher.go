@@ -52,15 +52,7 @@ func (c shift) Decode(input string) string {
 }
 
 func NewVigenere(key string) Cipher {
-	if key == "" {
-		return nil
-	}
-
-	if strings.ContainsFunc(key, func(r rune) bool { return !unicode.IsLetter(r) || unicode.IsUpper(r) }) {
-		return nil
-	}
-
-	if regexp.MustCompile(`^a+$`).MatchString(key) {
+	if key == "" || regexp.MustCompile(`\W+|[A-Z]+|\d+|^a+$`).MatchString(key) {
 		return nil
 	}
 

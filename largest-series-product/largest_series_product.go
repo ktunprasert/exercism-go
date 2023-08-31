@@ -15,25 +15,19 @@ func LargestSeriesProduct(digits string, span int) (int64, error) {
 		return 0, errors.New("span must be greater than zero")
 	}
 
-	maxProduct := 0
+	var maxProduct int64 = 0
 
 	for i := 0; i <= len(digits)-span; i++ {
 		seq := digits[i : i+span]
-		product := 1
+		var product int64 = 1
 		for _, n := range seq {
-			product *= int(n - '0')
+			product *= int64(n - '0')
 		}
 
-		maxProduct = max(maxProduct, product)
+		if product > maxProduct {
+			maxProduct = product
+		}
 	}
 
-	return int64(maxProduct), nil
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-
-	return b
+	return maxProduct, nil
 }

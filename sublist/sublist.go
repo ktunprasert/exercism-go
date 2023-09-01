@@ -12,15 +12,15 @@ func Sublist(l1, l2 []int) Relation {
 
 	switch {
 	case len(l1) == len(l2):
-		if subset(l1, l2) {
+		if contains(l1, l2) {
 			return RelationEqual
 		}
 	case len(l1) < len(l2):
-		if subset(l2, l1) {
+		if contains(l2, l1) {
 			return RelationSublist
 		}
 	case len(l1) > len(l2):
-		if subset(l1, l2) {
+		if contains(l1, l2) {
 			return RelationSuperlist
 		}
 	}
@@ -28,7 +28,7 @@ func Sublist(l1, l2 []int) Relation {
 	return RelationUnequal
 }
 
-func subset(big, small []int) bool {
+func contains(big, small []int) bool {
 	for i := 0; i <= len(big)-len(small); i++ {
 		window := big[i : i+len(small)]
 

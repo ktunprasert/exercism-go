@@ -6,7 +6,7 @@ func All(n int, s string) []string {
 	}
 
 	result := make([]string, 0)
-	for i := 0; i < len(s)+1-n; i++ {
+	for i := 0; i <= len(s)-n; i++ {
 		result = append(result, s[i:i+n])
 	}
 

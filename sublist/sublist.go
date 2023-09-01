@@ -4,9 +4,9 @@ func Sublist(l1, l2 []int) Relation {
 	switch {
 	case len(l1) == 0 && len(l2) == 0:
 		return RelationEqual
-	case len(l1) == 0 && len(l2) > 0:
+	case len(l1) == 0:
 		return RelationSublist
-	case len(l1) > 0 && len(l2) == 0:
+	case len(l2) == 0:
 		return RelationSuperlist
 	}
 

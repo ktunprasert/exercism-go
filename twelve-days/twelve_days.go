@@ -42,21 +42,21 @@ func Verse(i int) string {
 		return fmt.Sprintf(verse, days[0], gifts[0])
 	}
 
-	verseGifts := make([]string, 0)
+	verseGifts := make([]string, i)
 
 	for j := i; j > 1; j-- {
-		verseGifts = append(verseGifts, gifts[j-1])
+        verseGifts[i-j] = gifts[j-1]
 	}
 
-	verseGifts = append(verseGifts, fmt.Sprintf("and %s", gifts[0]))
+    verseGifts[i-1] = fmt.Sprintf("and %s", gifts[0])
 
 	return fmt.Sprintf(verse, days[i-1], strings.Join(verseGifts, ", "))
 }
 
 func Song() string {
-	out := []string{}
+	out := make([]string, 12)
 	for i := 0; i < 12; i++ {
-		out = append(out, Verse(i+1))
+        out[i] = Verse(i+1)
 	}
 
 	return strings.Join(out, "\n")

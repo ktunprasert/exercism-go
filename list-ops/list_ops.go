@@ -25,7 +25,7 @@ func (s IntList) Filter(fn func(int) bool) IntList {
 	filtered := make(IntList, 0)
 	for _, v := range s {
 		if fn(v) {
-            filtered.Append(IntList{v})
+            filtered = append(filtered, v)
 		}
 
 	}
@@ -33,7 +33,7 @@ func (s IntList) Filter(fn func(int) bool) IntList {
 }
 
 func (s IntList) Length() int {
-	return len(s)
+	return s.Foldl(func(a, b int) int { return a + 1 }, 0)
 }
 
 func (s *IntList) Map(fn func(int) int) IntList {

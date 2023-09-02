@@ -9,38 +9,32 @@ var (
 	numbers    = regexp.MustCompile(`-?\d+`)
 	operations = regexp.MustCompile(`plus|minus|multiplied by|divided by`)
 
-    valid = regexp.MustCompile(`(-?\d+( (plus|minus|multiplied by|divided by) -?\d+){1,})|is -?\d+\?`)
+	valid = regexp.MustCompile(`What is -?\d+( (plus|minus|multiplied by|divided by) -?\d+)*\?`)
 )
 
 func Answer(question string) (int, bool) {
-    nums := numbers.FindAllString(question, -1)
-    ops := operations.FindAllString(question, -1)
+	nums := numbers.FindAllString(question, -1)
+	ops := operations.FindAllString(question, -1)
 
-    if !valid.MatchString(question) {
-        return -1, false
-    }
-
-	if len(nums) == 0 || len(ops) >= len(nums) || len(nums)-1 != len(ops) {
+	if !valid.MatchString(question) {
 		return -1, false
 	}
 
+	sum, _ := strconv.Atoi(nums[0])
 	for i, op := range ops {
-        n1, _ := strconv.Atoi(nums[i])
-        n2, _ := strconv.Atoi(nums[i+1])
+		num, _ := strconv.Atoi(nums[i+1])
 
 		switch op {
 		case "plus":
-			nums[i+1] = strconv.Itoa(n1 + n2)
+			sum += num
 		case "minus":
-			nums[i+1] = strconv.Itoa(n1 - n2)
+			sum -= num
 		case "multiplied by":
-			nums[i+1] = strconv.Itoa(n1 * n2)
+			sum *= num
 		case "divided by":
-			nums[i+1] = strconv.Itoa(n1 / n2)
+			sum /= num
 		}
 	}
 
-	answer, _ := strconv.Atoi(nums[len(nums)-1])
-
-	return answer, true
+	return sum, true
 }

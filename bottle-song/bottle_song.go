@@ -19,32 +19,22 @@ var bottleMap = map[int]string{
 	0:  "No",
 }
 
-var bottleOnTheWall = "%s green bottle%s hanging on the wall,"
-var bottleShouldFall = "And if one green bottle should accidentally fall,"
-var bottleLeft = "There'll be %s green bottle%s hanging on the wall."
+var (
+	bottleOnTheWall  = "%s green bottle%s hanging on the wall,"
+	bottleShouldFall = "And if one green bottle should accidentally fall,"
+	bottleLeft       = "There'll be %s green bottle%s hanging on the wall."
+)
 
 func Recite(startBottles, takeDown int) []string {
 	recital := make([]string, 0)
 
 	for i := 0; i < takeDown; i++ {
-		plural := ""
-		if startBottles > 1 {
-			plural = "s"
-		}
-
 		recital = append(recital, []string{
-			fmt.Sprintf(bottleOnTheWall, bottleMap[startBottles], plural),
-			fmt.Sprintf(bottleOnTheWall, bottleMap[startBottles], plural),
+			fmt.Sprintf(bottleOnTheWall, bottleMap[startBottles], plural(startBottles)),
+			fmt.Sprintf(bottleOnTheWall, bottleMap[startBottles], plural(startBottles)),
 			bottleShouldFall,
+			fmt.Sprintf(bottleLeft, strings.ToLower(bottleMap[startBottles-1]), plural(startBottles-1)),
 		}...)
-
-		if startBottles-1 == 1 {
-			plural = ""
-		} else {
-			plural = "s"
-		}
-
-		recital = append(recital, fmt.Sprintf(bottleLeft, strings.ToLower(bottleMap[startBottles-1]), plural))
 
 		if i != takeDown-1 {
 			recital = append(recital, "")
@@ -54,4 +44,12 @@ func Recite(startBottles, takeDown int) []string {
 	}
 
 	return recital
+}
+
+func plural(n int) string {
+	if n != 1 {
+		return "s"
+	}
+
+	return ""
 }

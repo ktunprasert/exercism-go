@@ -1,6 +1,7 @@
 package tournament
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"io"
@@ -35,56 +36,46 @@ func (t *Team) Lost() {
 }
 
 func getOrCreateTeam(m map[string]*Team, name string) *Team {
-	if t, ok := m[name]; ok {
-		return t
-	}
+    if m[name] == nil {
+        m[name] = &Team{name: name}
+    }
 
-    t := &Team{name: name}
-    m[name] = t
-
-	return t
+    return m[name]
 }
 
 func Tally(reader io.Reader, writer io.Writer) error {
-	buf := make([]byte, 1024)
 	games := make(map[string]*Team)
+	scan := bufio.NewScanner(reader)
 
-	for {
-		n, err := reader.Read(buf)
-		if err == io.EOF {
-			break
+	for scan.Scan() {
+		line := scan.Text()
+
+		if len(line) == 0 || line[0] == '#' {
+			continue
 		}
 
-		lines := strings.Split(string(buf[:n]), "\n")
+		match := strings.Split(line, ";")
+		if len(match) != 3 {
+			return errors.New("invalid match")
+		}
 
-		for _, line := range lines {
-			if len(line) == 0 || line[0] == '#' {
-				continue
-			}
+		first, second, status := match[0], match[1], match[2]
 
-			match := strings.Split(line, ";")
-			if len(match) != 3 {
-				return errors.New("invalid match")
-			}
+		t1 := getOrCreateTeam(games, first)
+		t2 := getOrCreateTeam(games, second)
 
-			first, second, status := match[0], match[1], match[2]
-
-            t1 := getOrCreateTeam(games, first)
-            t2 := getOrCreateTeam(games, second)
-
-			switch status {
-			case "win":
-				t1.Win()
-				t2.Lost()
-			case "draw":
-				t1.Draw()
-				t2.Draw()
-			case "loss":
-				t2.Win()
-				t1.Lost()
-			default:
-				return errors.New("invalid status")
-			}
+		switch status {
+		case "win":
+			t1.Win()
+			t2.Lost()
+		case "draw":
+			t1.Draw()
+			t2.Draw()
+		case "loss":
+			t2.Win()
+			t1.Lost()
+		default:
+			return errors.New("invalid status")
 		}
 	}
 

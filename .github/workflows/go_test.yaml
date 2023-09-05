@@ -1,0 +1,24 @@
+name: Go Test Workflow
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21
+
+      - name: Test
+        run: |
+          find . -mindepth 1 -maxdepth 1 -type d ! -path './.git*' -print0 | xargs -0 -I{} sh -c 'echo "{}" && cd "{}" && go test'

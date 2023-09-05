@@ -18,30 +18,20 @@ const (
 )
 
 func Day(wSched WeekSchedule, wDay time.Weekday, month time.Month, year int) int {
-	if wSched != Last {
-		day := 1
-		if wSched == Teenth {
-			day = 13
-		}
-
-		start := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
-		for start.Weekday() != wDay {
-			start = start.AddDate(0, 0, 1)
-		}
-
-		schedule := 0
-		for schedule < int(wSched) {
-			start = start.AddDate(0, 0, 7)
-			schedule++
-		}
-
-		return start.Day()
+	start := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
+	dayModifier := 1
+	switch wSched {
+	case Last:
+		start = start.AddDate(0, 1, -1)
+		dayModifier = -1
+	case Teenth:
+		start = start.AddDate(0, 0, 12)
+	default:
+		start = start.AddDate(0, 0, int(wSched)*7)
 	}
 
-	start := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
-	start = start.AddDate(0, 1, -1)
 	for start.Weekday() != wDay {
-		start = start.AddDate(0, 0, -1)
+		start = start.AddDate(0, 0, dayModifier)
 	}
 
 	return start.Day()

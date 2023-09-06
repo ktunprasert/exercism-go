@@ -7,7 +7,7 @@ type Account struct {
 	isOpen bool
 	amount int64
 
-	mu sync.Mutex
+	mu sync.RWMutex
 }
 
 func Open(amount int64) *Account {
@@ -19,8 +19,8 @@ func Open(amount int64) *Account {
 }
 
 func (a *Account) Balance() (int64, bool) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
+	a.mu.RLock()
+	defer a.mu.RUnlock()
 
 	if !a.isOpen {
 		return 0, false

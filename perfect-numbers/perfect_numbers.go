@@ -22,17 +22,11 @@ func Classify(n int64) (Classification, error) {
 	}
 
 	sum := int64(1)
-	magic := n
-	for i := int64(2); i < magic; i++ {
+	for i := int64(2); i*i <= n; i++ {
 		if n%i == 0 {
 			sum += i
-			div := n / i
-			if i != div {
-				sum += div
-			}
-
-			if div < magic {
-				magic = div
+			if i != n/i {
+				sum += n / i
 			}
 		}
 	}

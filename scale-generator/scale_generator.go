@@ -2,11 +2,6 @@ package scale
 
 import "strings"
 
-const (
-	Sharp = iota + 1
-	Flat
-)
-
 var (
 	sharps = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
 	flats  = []string{"A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"}

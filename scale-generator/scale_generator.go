@@ -10,33 +10,27 @@ const (
 var (
 	sharps = []string{"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"}
 	flats  = []string{"A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"}
+
+    intervals = map[rune]int{'m': 1, 'M': 2, 'A': 3}
 )
 
 func Scale(tonic, interval string) []string {
-	signatureScale := getSignatureScale(tonic)
+	notes := getSignatureScale(tonic)
 
 	i := 0
-	for ; !strings.EqualFold(signatureScale[i], tonic); i++ {
+	for ; !strings.EqualFold(notes[i], tonic); i++ {
 	}
 
 	if len(interval) == 0 {
-		return append(signatureScale[i:], signatureScale[:i]...)
+		return append(notes[i:], notes[:i]...)
 	}
 
-	chromaticScale := []string{signatureScale[i]}
+	chromaticScale := []string{notes[i]}
 	for j := 0; j < len(interval); j++ {
-		var scalar int
-		switch interval[j] {
-		case 'M':
-			scalar = 2
-		case 'A':
-			scalar = 3
-		default:
-			scalar = 1
-		}
+		var scalar int = intervals[rune(interval[j])]
 
 		i = (i + scalar) % 12
-		chromaticScale = append(chromaticScale, signatureScale[i])
+		chromaticScale = append(chromaticScale, notes[i])
 	}
 
 	return chromaticScale

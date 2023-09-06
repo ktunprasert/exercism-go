@@ -3,9 +3,13 @@ package allyourbase
 import "errors"
 
 func ConvertToBase(inputBase int, inputDigits []int, outputBase int) ([]int, error) {
-	if inputBase < 2 || outputBase < 2 {
-		return nil, errors.New("base must be >= 2")
+	if inputBase < 2 {
+		return nil, errors.New("input base must be >= 2")
 	}
+
+    if outputBase < 2 {
+        return nil, errors.New("output base must be >= 2")
+    }
 
 	base10 := 0
 	for i, d := range inputDigits {

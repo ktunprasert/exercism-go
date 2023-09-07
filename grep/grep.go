@@ -7,26 +7,29 @@ import (
 	"regexp"
 )
 
-var programFlags = map[string]bool{
-	"-n": false, // Prepend line number
-	"-l": false, // Output only the name of the files
-	"-i": false, // Insensitive matching
-	"-v": false, // Invert the program, collect non-matching files
-	"-x": false, // Search when the string matches entire line
-}
-
 func Search(pattern string, flags, files []string) []string {
-	defer resetFlags()
-	setFlags(flags)
+	var flagLineNumber, flagOnlyName, flagInsensitive, flagInvert, flagEntireLine bool
+
+	flagMultipleFiles := len(files) > 1
+
+	for _, f := range flags {
+		switch f {
+		case "-n":
+			flagLineNumber = true
+		case "-l":
+			flagOnlyName = true
+		case "-i":
+			flagInsensitive = true
+		case "-v":
+			flagInvert = true
+		case "-x":
+			flagEntireLine = true
+		}
+	}
 
 	result := make([]string, 0)
-	scanned := make(map[string]struct{})
 
 	for _, filename := range files {
-		if _, ok := scanned[filename]; ok {
-			continue
-		}
-
 		file, err := os.Open(filename)
 		if err != nil {
 			return nil
@@ -35,11 +38,11 @@ func Search(pattern string, flags, files []string) []string {
 
 		scanner := bufio.NewScanner(file)
 
-		if programFlags["-i"] {
+		if flagInsensitive {
 			pattern = fmt.Sprintf("%s%s", `(?i)`, pattern)
 		}
 
-		if programFlags["-x"] {
+		if flagEntireLine {
 			pattern = fmt.Sprintf(`^%s$`, pattern)
 		}
 
@@ -47,55 +50,30 @@ func Search(pattern string, flags, files []string) []string {
 
 		lineN := 1
 
-		var fileMatched bool
 		for scanner.Scan() {
 			line := scanner.Text()
 
 			// XOR between LINE_MATCHED and INVERT_PROGRAM
-			if re.MatchString(line) != programFlags["-v"] {
-				switch {
-				case programFlags["-l"]:
-					if fileMatched {
-						break
-					}
-
+			if re.MatchString(line) != flagInvert {
+				if flagOnlyName {
 					result = append(result, filename)
-				case programFlags["-n"]:
-					if len(files) > 1 {
-						line = fmt.Sprintf("%s:%d:%s", filename, lineN, line)
-					} else {
-						line = fmt.Sprintf("%d:%s", lineN, line)
-					}
-					result = append(result, line)
-				default:
-					if len(files) > 1 {
-						line = fmt.Sprintf("%s:%s", filename, line)
-					}
-					result = append(result, line)
+					break
 				}
 
-				fileMatched = true
+				if flagLineNumber {
+					line = fmt.Sprintf("%d:%s", lineN, line)
+				}
+
+				if flagMultipleFiles {
+					line = fmt.Sprintf("%s:%s", filename, line)
+				}
+
+				result = append(result, line)
 			}
 
 			lineN++
 		}
-
-		scanned[filename] = struct{}{}
 	}
 
 	return result
-}
-
-func setFlags(flags []string) {
-	for _, f := range flags {
-		if _, ok := programFlags[f]; ok {
-			programFlags[f] = true
-		}
-	}
-}
-
-func resetFlags() {
-	for key := range programFlags {
-		programFlags[key] = false
-	}
 }
